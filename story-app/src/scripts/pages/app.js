@@ -68,6 +68,7 @@ class App {
       ${isLoggedIn
         ? `<li><a href="#/add">Tambah Cerita</a></li>
            <li><a href="#/drafts">Draft</a></li>
+           <li><a href="#/saved">Story Tersimpan</a></li>
            <li>
              <button class="nav-btn" id="notif-toggle-btn" aria-pressed="${pushSubscribed}"
                aria-label="${pushSubscribed ? 'Matikan notifikasi' : 'Aktifkan notifikasi'}">

@@ -14,29 +14,13 @@
       "src": "/images/logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/images/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Beranda Story App di desktop"
-    },
-    {
-      "src": "/images/screenshot-mobile.png",
-      "sizes": "375x812",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Beranda Story App di mobile"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -45,6 +29,13 @@
       "short_name": "Tambah",
       "description": "Buat cerita baru",
       "url": "/#/add",
+      "icons": [{ "src": "/images/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Story Tersimpan",
+      "short_name": "Tersimpan",
+      "description": "Lihat story yang disimpan",
+      "url": "/#/saved",
       "icons": [{ "src": "/images/logo.png", "sizes": "192x192" }]
     },
     {
