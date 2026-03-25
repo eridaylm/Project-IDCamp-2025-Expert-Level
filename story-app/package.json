@@ -1,7 +1,7 @@
 {
-  "name": "Story App",
+  "name": "story-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "leaflet": "^1.9.4",
-    "sweetalert2": "^11.26.24",
+    "sweetalert2": "^11.14.5",
     "vite": "^6.2.0"
   }
 }
