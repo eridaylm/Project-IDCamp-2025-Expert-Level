@@ -519,6 +519,12 @@ header {
 .story-card:hover .story-image { transform: scale(1.04); }
 
 .story-content { padding: 16px; }
+.story-card-actions {
+  padding: 8px 16px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .story-author {
   font-family: 'Poppins', sans-serif;
@@ -743,7 +749,6 @@ header {
   .drawer-button { display: none; }
   .stories-map { height: 480px; }
 }
-/* ===== DRAFTS PAGE ===== */
 .drafts-section h1 {
   font-size: 1.8rem;
   color: var(--primary-dark);

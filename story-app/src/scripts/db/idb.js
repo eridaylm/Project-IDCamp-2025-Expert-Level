@@ -121,14 +121,34 @@ export async function searchDrafts(query) {
   );
 }
 
-export async function cacheStories(stories) {
+export async function saveStory(story) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_STORIES, 'readwrite');
     const store = tx.objectStore(STORE_STORIES);
-    stories.forEach((s) => store.put(s));
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
+    const req = store.put({ ...story, savedAt: new Date().toISOString() });
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function deleteSavedStory(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_STORIES, 'readwrite');
+    const req = tx.objectStore(STORE_STORIES).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function getSavedStory(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_STORIES, 'readonly');
+    const req = tx.objectStore(STORE_STORIES).get(id);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
   });
 }
 

@@ -20,4 +20,16 @@ export default class HomePresenter {
       this.#view.hideLoading();
     }
   }
+
+  async saveStory(story) {
+    return await this.#model.saveStory(story);
+  }
+
+  async removeSavedStory(id) {
+    return await this.#model.removeSavedStory(id);
+  }
+
+  async isStorySaved(id) {
+    return await this.#model.isSaved(id);
+  }
 }

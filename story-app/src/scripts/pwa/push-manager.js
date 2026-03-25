@@ -1,6 +1,6 @@
 import CONFIG from '../config.js';
 
-const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Zv_CEHPnkRkFxgN62dlRIXK7q3h-yOzpSQMiX58BV88UGGmGVAMDcqKjY';
+const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);

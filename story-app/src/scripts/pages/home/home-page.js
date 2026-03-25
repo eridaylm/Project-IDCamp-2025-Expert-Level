@@ -2,6 +2,7 @@ import HomePresenter from '../../presenters/home-presenter.js';
 import { showFormattedDate } from '../../utils/index.js';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import Swal from 'sweetalert2';
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -18,6 +19,7 @@ export default class HomePage {
   #map;
   #markers = [];
   #stories = [];
+  #savedIds = new Set(); 
 
   async render() {
     return `
@@ -105,7 +107,7 @@ export default class HomePage {
     alertEl.hidden = false;
   }
 
-  showStories(stories, fromCache = false) {
+  async showStories(stories, fromCache = false) {
     this.#stories = stories;
     const list = document.getElementById('stories-list');
 
@@ -121,28 +123,43 @@ export default class HomePage {
       return;
     }
 
-    list.innerHTML = stories.map((story, idx) => `
-      <article class="story-card" role="listitem" data-id="${story.id}" data-index="${idx}"
-        tabindex="0" aria-label="Cerita oleh ${story.name}">
-        <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}" 
-          class="story-image" loading="lazy" />
-        <div class="story-content">
-          <h2 class="story-author">${story.name}</h2>
-          <p class="story-desc">${story.description}</p>
-          <time class="story-date" datetime="${story.createdAt}">
-            ${showFormattedDate(story.createdAt, 'id-ID')}
-          </time>
-          ${story.lat && story.lon 
-            ? `<span class="story-location" aria-label="Lokasi tersedia">📍 Lihat di peta</span>` 
-            : ''}
-        </div>
-      </article>
-    `).join('');
+    await this.#loadSavedIds(stories);
+
+    list.innerHTML = stories.map((story, idx) => {
+      const isSaved = this.#savedIds.has(story.id);
+      return `
+        <article class="story-card" role="listitem" data-id="${story.id}" data-index="${idx}"
+          tabindex="0" aria-label="Cerita oleh ${story.name}">
+          <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}" 
+            class="story-image" loading="lazy" />
+          <div class="story-content">
+            <h2 class="story-author">${story.name}</h2>
+            <p class="story-desc">${story.description}</p>
+            <time class="story-date" datetime="${story.createdAt}">
+              ${showFormattedDate(story.createdAt, 'id-ID')}
+            </time>
+            ${story.lat && story.lon 
+              ? `<span class="story-location" aria-label="Lokasi tersedia">📍 Lihat di peta</span>` 
+              : ''}
+          </div>
+          <div class="story-card-actions">
+            ${isSaved
+              ? `<button class="btn btn-danger btn-sm remove-story-btn" data-id="${story.id}" aria-label="Hapus story dari tersimpan">
+                  🗑️ Hapus Story
+                </button>`
+              : `<button class="btn btn-secondary btn-sm save-story-btn" data-id="${story.id}" data-index="${idx}" aria-label="Simpan story ini">
+                  💾 Simpan Story
+                </button>`
+            }
+          </div>
+        </article>
+      `;
+    }).join('');
 
     this.#clearMarkers();
     const validStories = stories.filter(s => s.lat && s.lon);
     
-    validStories.forEach((story, idx) => {
+    validStories.forEach((story) => {
       const marker = L.marker([story.lat, story.lon])
         .addTo(this.#map)
         .bindPopup(`
@@ -162,7 +179,8 @@ export default class HomePage {
     }
 
     list.querySelectorAll('.story-card').forEach((card) => {
-      const onClick = () => {
+      const onClick = (e) => {
+        if (e.target.closest('button')) return;
         const idx = parseInt(card.dataset.index);
         const story = this.#stories[idx];
         if (story.lat && story.lon) {
@@ -173,12 +191,85 @@ export default class HomePage {
         list.querySelectorAll('.story-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
       };
-
       card.addEventListener('click', onClick);
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); }
       });
     });
+
+    list.querySelectorAll('.save-story-btn').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const storyId = btn.dataset.id;
+        const idx = parseInt(btn.dataset.index);
+        const story = this.#stories[idx];
+        try {
+          await this.#presenter.saveStory(story);
+          this.#savedIds.add(storyId);
+          btn.outerHTML = `<button class="btn btn-danger btn-sm remove-story-btn" data-id="${storyId}" aria-label="Hapus story dari tersimpan">🗑️ Hapus Story</button>`;
+          const newBtn = list.querySelector(`.remove-story-btn[data-id="${storyId}"]`);
+          if (newBtn) this.#attachRemoveEvent(newBtn);
+          Swal.fire({ icon: 'success', title: 'Story Tersimpan!', timer: 1500, showConfirmButton: false });
+        } catch (err) {
+          Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: err.message, confirmButtonColor: '#1a6fc4' });
+        }
+      });
+    });
+
+    list.querySelectorAll('.remove-story-btn').forEach((btn) => {
+      this.#attachRemoveEvent(btn);
+    });
+  }
+
+  #attachRemoveEvent(btn) {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const storyId = btn.dataset.id;
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: 'Hapus Story Tersimpan?',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#e03e3e',
+        cancelButtonColor: '#1a6fc4',
+      });
+      if (!result.isConfirmed) return;
+      try {
+        await this.#presenter.removeSavedStory(storyId);
+        this.#savedIds.delete(storyId);
+        const idx = this.#stories.findIndex(s => s.id === storyId);
+        btn.outerHTML = `<button class="btn btn-secondary btn-sm save-story-btn" data-id="${storyId}" data-index="${idx}" aria-label="Simpan story ini">💾 Simpan Story</button>`;
+        const newBtn = document.querySelector(`.save-story-btn[data-id="${storyId}"]`);
+        if (newBtn) {
+          newBtn.addEventListener('click', async (e2) => {
+            e2.stopPropagation();
+            const story = this.#stories[parseInt(newBtn.dataset.index)];
+            try {
+              await this.#presenter.saveStory(story);
+              this.#savedIds.add(storyId);
+              newBtn.outerHTML = `<button class="btn btn-danger btn-sm remove-story-btn" data-id="${storyId}" aria-label="Hapus story dari tersimpan">🗑️ Hapus Story</button>`;
+              const rebtn = document.querySelector(`.remove-story-btn[data-id="${storyId}"]`);
+              if (rebtn) this.#attachRemoveEvent(rebtn);
+              Swal.fire({ icon: 'success', title: 'Story Tersimpan!', timer: 1500, showConfirmButton: false });
+            } catch (err) {
+              Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: err.message, confirmButtonColor: '#1a6fc4' });
+            }
+          });
+        }
+        Swal.fire({ icon: 'success', title: 'Story Dihapus!', timer: 1500, showConfirmButton: false });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Gagal Menghapus', text: err.message, confirmButtonColor: '#1a6fc4' });
+      }
+    });
+  }
+
+  async #loadSavedIds(stories) {
+    this.#savedIds.clear();
+    for (const story of stories) {
+      const isSaved = await this.#presenter.isStorySaved(story.id);
+      if (isSaved) this.#savedIds.add(story.id);
+    }
   }
 
   #clearMarkers() {
