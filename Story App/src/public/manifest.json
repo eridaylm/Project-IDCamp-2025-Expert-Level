@@ -1,0 +1,60 @@
+{
+  "name": "Story App — Berbagi Cerita",
+  "short_name": "StoryApp",
+  "description": "Aplikasi berbagi cerita dengan visualisasi lokasi pada peta interaktif",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f4f96",
+  "theme_color": "#1a6fc4",
+  "lang": "id",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Beranda Story App di desktop"
+    },
+    {
+      "src": "/images/screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Beranda Story App di mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tambah Cerita",
+      "short_name": "Tambah",
+      "description": "Buat cerita baru",
+      "url": "/#/add",
+      "icons": [{ "src": "/images/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Draft Tersimpan",
+      "short_name": "Draft",
+      "description": "Lihat draft cerita offline",
+      "url": "/#/drafts",
+      "icons": [{ "src": "/images/logo.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["social", "lifestyle"],
+  "prefer_related_applications": false
+}

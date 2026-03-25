@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1a6fc4" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="StoryApp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <title>Story App — Berbagi Cerita</title>
+
+    <script type="module" src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <!-- Skip to content accessibility -->
+    <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
+
+    <header>
+      <div class="main-header container">
+        <a class="brand-name" href="#/">
+          <img src="/images/logo.png" alt="" aria-hidden="true" width="32" height="32" />
+          Story App
+        </a>
+
+        <nav id="navigation-drawer" class="navigation-drawer" aria-label="Navigasi utama">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Beranda</a></li>
+            <li><a href="#/about">Tentang</a></li>
+            <li><a href="#/login">Login</a></li>
+            <li><a href="#/register">Daftar</a></li>
+          </ul>
+        </nav>
+
+        <button id="drawer-button" class="drawer-button" 
+          aria-label="Buka navigasi" aria-expanded="false" aria-controls="navigation-drawer">☰</button>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2024 Story App — IDCamp Expert Level Project</p>
+      </div>
+    </footer>
+  </body>
+</html>
